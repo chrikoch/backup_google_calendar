@@ -1,30 +1,56 @@
 #!/bin/bash
 
-dropboxUploader=~/Dropbox-Uploader/dropbox_uploader.sh
+#set defaults
+configfile="./config"
+dropboxUploader=dropbox_uploader.sh
+url=""
+filename=""
+dir=""
 
-if [ -z "$1" ]
+while getopts "c:u:f:d:" optname
+do
+  case "$optname" in
+    "c")
+      configfile=$OPTARG
+      ;;
+    "u")
+      url=$OPTARG
+      ;;
+    "f")
+      filename=$OPTARG
+      ;;
+    "d")
+      dir=$OPTARG
+      ;;
+  esac
+done
+
+source ${configfile}
+
+
+if [ -z "$url" ]
 then
-  echo "Give URL to calendar as first param"
+  echo "Give URL to calendar with param -u"
   exit 1
 fi
 
-if [ -z "$2" ]
+if [ -z "$filename" ]
 then
-  echo "Give output name as second param"
+  echo "Give output filename prefix with param -f"
   exit 1
 fi
 
-if [ -z "$3" ]
+if [ -z "$dir" ]
 then
-  echo "Give Dropbox dir as third param"
+  echo "Give Dropbox dir with param -d"
   exit 1
 fi
 
-outfile=${2}"_"`date +"%Y%m%d"`".ics"
+outfile=${filename}"_"`date +"%Y%m%d"`".ics"
 
-wget -O "/tmp/${outfile}" $1
+wget -O "/tmp/${outfile}" ${url}
 
-${dropboxUploader} upload /tmp/${outfile} "${3}/${outfile}"
+${dropboxUploader} upload /tmp/${outfile} "${dir}/${outfile}"
 
 rm /tmp/${outfile}
 
