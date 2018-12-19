@@ -46,6 +46,13 @@ then
   exit 1
 fi
 
+#check wheter dropbox uploader is executable
+if ! which ${dropboxUploader} 1>/dev/null 2>/dev/null; then
+  echo "dropbox command <${dropboxUploader}> not found or not executable"
+  exit 1
+fi
+
+
 outfile=${filename}"_"`date +"%Y%m%d"`".ics"
 
 wget -O "/tmp/${outfile}" ${url}
